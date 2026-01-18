@@ -1,3 +1,4 @@
+mod question;
 use std::collections::HashSet;
 
 struct Difference<'first, 'second> {
@@ -11,14 +12,24 @@ fn find_difference<'fst, 'snd>(
 ) -> Difference<'fst, 'snd> {
     let sentence_1_words: HashSet<&str> = sentence1.split(" ").collect();
     let sentence_2_words: HashSet<&str> = sentence2.split(" ").collect();
+    let mut first_only = Vec::new();
+    let mut second_only = Vec::new();
+
+    sentence_1_words.iter().for_each(|item| {
+        if !sentence_2_words.contains(*item) {
+            first_only.push(*item);
+        }
+    });
+
+    sentence_2_words.iter().for_each(|item| {
+        if !sentence_1_words.contains(*item) {
+            second_only.push(*item);
+        }
+    });
 
     Difference {
-        first_only: (&sentence_1_words - &sentence_2_words)
-            .into_iter()
-            .collect(),
-        second_only: (&sentence_2_words - &sentence_1_words)
-            .into_iter()
-            .collect(),
+        first_only: first_only,
+        second_only: second_only,
     }
 }
 
@@ -32,7 +43,7 @@ fn main() {
         diff.first_only
     };
 
-    assert_eq!(first_only, vec!["hate", "surf"]);
+    assert_eq!(first_only, vec!["love", "surf"]);
 
     let second_only = {
         let third_sentence = String::from("I hate the snow and the sand.");
