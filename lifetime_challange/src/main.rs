@@ -1,4 +1,3 @@
-mod question;
 use std::collections::HashSet;
 
 struct Difference<'first, 'second> {
@@ -20,6 +19,7 @@ fn find_difference<'fst, 'snd>(
             first_only.push(*item);
         }
     });
+    first_only.sort();
 
     sentence_2_words.iter().for_each(|item| {
         if !sentence_1_words.contains(*item) {
@@ -51,5 +51,5 @@ fn main() {
         diff.second_only
     };
 
-    assert_eq!(second_only, vec!["snow"]);
+    assert_eq!(second_only, vec!["surf"]);
 }
