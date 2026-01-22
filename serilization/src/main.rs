@@ -36,4 +36,20 @@ fn main() {
     // method doesn't takes
     let rando_with_type: Data = serde_json::from_str(&rando_point.to_string()).unwrap();
     println!("The rando data is: {:#?}", rando_with_type);
+
+    let mero_json_wala_string = r#"{
+        "x": 34,
+        "y": 45
+    }"#;
+    let mero_arko_string = String::from(
+        "{
+            \"x\": 56,
+            \"y\": 67
+        }",
+    );
+
+    let with_types = serde_json::from_str::<Data>(mero_json_wala_string).unwrap();
+    let with_types_arko = serde_json::from_str::<Data>(&mero_arko_string).unwrap();
+    println!("with types: {:#?}", with_types);
+    println!("with types arko: {:#?}", with_types_arko);
 }
