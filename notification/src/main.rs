@@ -1,36 +1,51 @@
 use std::collections::HashMap;
 use std::error::Error;
 
+use clap::Parser;
 use zbus::{Connection, proxy, zvariant::Value};
 
-// #[tokio::main]
-// async fn main() -> Result<(), Box<dyn Error>> {
-//     let connection = Connection::session().await?;
-//
-//     let m = connection
-//         .call_method(
-//             Some("org.freedesktop.Notifications"),
-//             "/org/freedesktop/Notifications",
-//             Some("org.freedesktop.Notifications"),
-//             "Notify",
-//             &(
-//                 "my-app",
-//                 0u32,
-//                 "dialog-information",
-//                 "A summary",
-//                 "Some body",
-//                 // they both mean to create a vector (empty vector) of type &str
-//                 vec![""; 0],
-//                 // Vec::<&str>::new(),
-//                 HashMap::<&str, &Value>::new(),
-//                 5000,
-//             ),
-//         )
-//         .await?;
-//     let reply: u32 = m.body().deserialize().unwrap();
-//     dbg!(reply);
-//     Ok(())
-// }
+#[derive(Parser)]
+struct Cli {
+    /// Application name
+    #[arg(short, long, default_value_t = String::from("my_app"))]
+    app_name: String,
+
+    /// Notification title
+    #[arg(short, long, default_value_t = String::from("A summary"))]
+    title: String,
+
+    /// Notification body
+    #[arg(short, long, default_value_t = String::from("Some body"))]
+    body: String,
+
+    /// Icon name
+    /// Default is "dialog-information"
+    #[arg(short, long, default_value_t = String::from("dialog-information"))]
+    icon: String,
+
+    /// Notification timeout in milliseconds
+    #[arg(short = 's', long, default_value_t = 5000)]
+    timeout: i32,
+}
+
+pub struct Notification {
+    pub app_name: String,
+    pub title: String,
+    pub body: String,
+    pub icon: String,
+    pub timeout: i32,
+}
+impl Notification {
+    pub fn new(app_name: String, title: String, body: String, icon: String, timeout: i32) -> Self {
+        Self {
+            app_name,
+            title,
+            body,
+            icon,
+            timeout,
+        }
+    }
+}
 
 #[proxy(
     default_service = "org.freedesktop.Notifications",
@@ -52,21 +67,24 @@ trait Notifications {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
+    let cli = Cli::parse();
+
+    let notification = Notification::new(cli.app_name, cli.title, cli.body, cli.icon, cli.timeout);
+
     let connection = Connection::session().await?;
     let proxy = NotificationsProxy::new(&connection).await?;
-    let reply = proxy
+    let _reply = proxy
         .notify(
-            "my_app",
+            &notification.app_name,
             0,
-            "dialog-information",
-            "A summary",
-            "Some body",
+            &notification.icon,
+            &notification.title,
+            &notification.body,
             &[],
             HashMap::new(),
-            5000,
+            notification.timeout,
         )
         .await?;
-    dbg!(reply);
 
     Ok(())
 }
