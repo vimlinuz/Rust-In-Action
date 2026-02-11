@@ -29,7 +29,7 @@ impl fmt::Display for Message {
 }
 
 fn main() {
-    let message = Message::new(String::from("nigger"), 1);
+    let message = Message::new(String::from("rohit"), 323);
 
     println!("The original message is: {}", message);
 
