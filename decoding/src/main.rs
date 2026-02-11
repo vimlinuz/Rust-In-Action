@@ -1,7 +1,7 @@
 use std::char::from_u32;
 
 fn main() {
-    (1..100).into_iter().for_each(|i| {
+    (1..1000).into_iter().for_each(|i| {
         println!(
             "Decoded message: {}, key: {i}",
             ("ıĬīĪķ".to_string())
