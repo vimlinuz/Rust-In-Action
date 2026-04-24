@@ -38,10 +38,12 @@ impl Solution {
 
         if nums3_len % 2 == 0 {
             let index = nums3_len / 2;
-
-            (nums3[index] + nums3[index - 1]) as f64 / 2 as f64
+            let first_number = nums3[index];
+            let second_number = nums3[index - 1];
+            (first_number + second_number) as f64 / 2 as f64
         } else {
-            nums3[(nums3_len - 1) / 2] as f64
+            let index = (nums3_len - 1) / 2;
+            nums3[index] as f64
         }
     }
 }
